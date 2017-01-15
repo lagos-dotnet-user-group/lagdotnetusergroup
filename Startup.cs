@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,11 +46,29 @@ namespace WebApplication
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 5;
+
+                options.Cookies.ApplicationCookie.LoginPath = "/logIn";
+                options.Cookies.ApplicationCookie.LogoutPath = "/account/Logoff";
+                
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                // options.MimeTypes = new string[] { "multipart/form-data", "application/pdf" };
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -59,6 +80,7 @@ namespace WebApplication
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            app.UseResponseCompression();
 
             if (env.IsDevelopment())
             {
@@ -70,8 +92,33 @@ namespace WebApplication
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            var options = new RewriteOptions()
+                .AddRedirect("(.*)/$", "$1")                    // Redirect using a regular expression
+                .AddRewrite(@"app/(\d+)", "app?id=$1", skipRemainingRules: false); // Rewrite based on a Regular expression
+                // .AddIISUrlRewrite(env.ContentRootFileProvider, "UrlRewrite.xml")        // Use IIS UrlRewriter rules to configure
+                // .AddApacheModRewrite(env.ContentRootFileProvider, "Rewrite.txt");       // Use Apache mod_rewrite rules to configure
 
-            app.UseStaticFiles();
+            app.UseRewriter(options);
+
+            //DELETE IN PRODUCTION
+            app.UseDeveloperExceptionPage();
+            app.UseDatabaseErrorPage();
+            app.UseBrowserLink();
+            //DELETE IN PRODUCTION
+
+
+            app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
+            // app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    // Disable caching of all static files in development mode.
+                    context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store";
+                    context.Context.Response.Headers["Pragma"] = "no-cache";
+                    context.Context.Response.Headers["Expires"] = "-1";
+                }
+            });
 
             app.UseIdentity();
 
