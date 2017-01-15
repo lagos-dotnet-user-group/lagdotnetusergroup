@@ -6,7 +6,6 @@ this repository contains source code for the [Lagos dotnet user group](http://la
 *   Views using ASP.NET Core MVC
 *   [Gulp](https://go.microsoft.com/fwlink/?LinkId=518007) and [Bower](https://go.microsoft.com/fwlink/?LinkId=518004) for managing client-side libraries
 *   Theming using [Bootstrap](https://go.microsoft.com/fwlink/?LinkID=398939)
-n the documentation site](https://go.microsoft.com/fwlink/?LinkID=699323)
 
 ## Run & Deploy
 
