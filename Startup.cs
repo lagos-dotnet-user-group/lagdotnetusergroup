@@ -64,8 +64,8 @@ namespace WebApplication
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
-                options.EnableForHttps = true;
-                // options.MimeTypes = new string[] { "multipart/form-data", "application/pdf" };
+                // options.EnableForHttps = true;
+                options.MimeTypes = new string[] { "multipart/form-data", "application/pdf" };
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
