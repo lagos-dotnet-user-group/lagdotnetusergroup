@@ -6,6 +6,8 @@ namespace WebApplication.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<Client> Clients { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using WebApplication.Data;
 using WebApplication.Models;
 using WebApplication.Models.AccountViewModels;
 using WebApplication.Services;
@@ -17,6 +17,7 @@ namespace WebApplication.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private ApplicationDbContext _dataContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -28,8 +29,10 @@ namespace WebApplication.Controllers
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            ApplicationDbContext dataContext)
         {
+            _dataContext = dataContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -38,18 +41,24 @@ namespace WebApplication.Controllers
         }
 
         //
-        // GET: /Account/Login
+        // GET: /Login
         [HttpGet]
+        [Route("login")]
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         //
-        // POST: /Account/Login
+        // POST: /Login
         [HttpPost]
+        [Route("login")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
@@ -63,6 +72,9 @@ namespace WebApplication.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    user.LastLoginDate = DateTime.Now;
+                    await _dataContext.SaveChangesAsync();
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -88,9 +100,14 @@ namespace WebApplication.Controllers
         //
         // GET: /Account/Register
         [HttpGet]
+        [Route("signup")]
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -98,6 +115,7 @@ namespace WebApplication.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
+        [Route("signup")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
@@ -105,7 +123,16 @@ namespace WebApplication.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var filepath = "/images/profiles/user-av.jpg";
+
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    AvatarPath = filepath.ToString(),
+                    LastLoginDate = DateTime.Now,
+                    JoinDate = DateTime.Now
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -129,6 +156,7 @@ namespace WebApplication.Controllers
         //
         // POST: /Account/LogOff
         [HttpPost]
+        [Route("logoff")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
