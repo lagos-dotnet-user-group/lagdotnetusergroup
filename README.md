@@ -9,11 +9,13 @@ this repository contains source code for the [Lagos dotnet user group](http://la
 
 ## Run & Deploy
 
-restore the .NET core packages described in the `package.json` and verify that it works:
+restore the .NET core packages described in the `package.json`, the update database with the migrations and run the project:
 
 ```bash
 dotnet restore
+dotnet ef database update
 dotnet run
+
 ```
 
 The `dotnet restore` command first restorest the necessary packages required to run the application, 
