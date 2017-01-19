@@ -17,6 +17,7 @@ namespace WebApplication.Controllers
             return View();
         }
 
+        [Route("about")]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -24,6 +25,7 @@ namespace WebApplication.Controllers
             return View();
         }
 
+        [Route("contact")]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";

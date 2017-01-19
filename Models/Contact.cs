@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication.Models
 {
-    public class Client
+    public class Contact
     {
         public int Id { get; set; }
 
