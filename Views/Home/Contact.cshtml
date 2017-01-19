@@ -4,14 +4,63 @@
 <h2>@ViewData["Title"].</h2>
 <h3>@ViewData["Message"]</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<div class="row">
+    <div class="col-md-4">  
+        <address>
+            One Microsoft Way<br />
+            Redmond, WA 98052-6399<br />
+            <abbr title="Phone">P:</abbr>
+            425.555.0100
+        </address>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+        <address>
+            <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
+            <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+        </address>
+    </div>
+
+    <div class="col-md-8">
+        <section>
+            <form asp-controller="home" asp-action="contact" method="post" class="form-horizontal">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Subject" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Subject" class="form-control" />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Message" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="Message" class="form-control" />
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-default">Send</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

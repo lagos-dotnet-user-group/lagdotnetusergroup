@@ -8,7 +8,7 @@ using WebApplication.Data;
 namespace WebApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170118174123_v1mig")]
+    [Migration("20170119035220_v1mig")]
     partial class v1mig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -182,7 +182,7 @@ namespace WebApplication.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Client", b =>
+            modelBuilder.Entity("WebApplication.Models.Contact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -202,7 +202,7 @@ namespace WebApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("contacts");
                 });
 
             modelBuilder.Entity("WebApplication.Models.Subscriber", b =>

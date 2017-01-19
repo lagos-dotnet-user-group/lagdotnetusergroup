@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebApplication.Models.HomeViewModels;
 
 namespace WebApplication.Controllers
 {
@@ -30,6 +31,14 @@ namespace WebApplication.Controllers
         {
             ViewData["Message"] = "Your contact page.";
 
+            return View();
+        }
+
+        [HttpPost]
+        [Route("contact")]
+        public IActionResult Contact(ContactViewModel vm)
+        {
+            //TODO implement message service
             return View();
         }
 

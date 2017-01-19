@@ -181,7 +181,7 @@ namespace WebApplication.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("WebApplication.Models.Client", b =>
+            modelBuilder.Entity("WebApplication.Models.Contact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -201,7 +201,7 @@ namespace WebApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("contacts");
                 });
 
             modelBuilder.Entity("WebApplication.Models.Subscriber", b =>
