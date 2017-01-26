@@ -3,7 +3,7 @@
 }
 <h2>@ViewData["Title"].</h2>
 <h3>@ViewData["Message"]</h3>
-
+@model ContactViewModel
 <div class="row">
     <div class="col-md-4">  
         <address>
@@ -21,7 +21,7 @@
 
     <div class="col-md-8">
         <section>
-            <form asp-controller="home" asp-action="contact" method="post" class="form-horizontal">
+            <form asp-controller="home" asp-action="contact" method="post" class="form-horizontal" asp-anti-forgery="true" novalidate>
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Name" class="col-md-2 control-label"></label>

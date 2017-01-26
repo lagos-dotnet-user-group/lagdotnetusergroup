@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebApplication.Data;
 using WebApplication.Models;
+using WebApplication.Models.HomeViewModels;
 using WebApplication.Services;
 
 namespace WebApplication
@@ -55,7 +57,7 @@ namespace WebApplication
                 options.Password.RequiredLength = 5;
 
                 options.Cookies.ApplicationCookie.LoginPath = "/logIn";
-                options.Cookies.ApplicationCookie.LogoutPath = "/account/Logoff";
+                options.Cookies.ApplicationCookie.LogoutPath = "/Logoff";
                 
             }).AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -76,7 +78,7 @@ namespace WebApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -92,13 +94,6 @@ namespace WebApplication
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            var options = new RewriteOptions()
-                .AddRedirect("(.*)/$", "$1")                    // Redirect using a regular expression
-                .AddRewrite(@"app/(\d+)", "app?id=$1", skipRemainingRules: false); // Rewrite based on a Regular expression
-                // .AddIISUrlRewrite(env.ContentRootFileProvider, "UrlRewrite.xml")        // Use IIS UrlRewriter rules to configure
-                // .AddApacheModRewrite(env.ContentRootFileProvider, "Rewrite.txt");       // Use Apache mod_rewrite rules to configure
-
-            app.UseRewriter(options);
 
             //DELETE IN PRODUCTION
             app.UseDeveloperExceptionPage();
@@ -119,7 +114,7 @@ namespace WebApplication
                     context.Context.Response.Headers["Expires"] = "-1";
                 }
             });
-
+            Mapper.Initialize(config => config.CreateMap<Contact, ContactViewModel>().ReverseMap());
             app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
@@ -130,6 +125,60 @@ namespace WebApplication
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            await CreateRoles(serviceProvider);
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            string[] roleNames = { "Admin", "Manager", "Editor", "Member" };
+            IdentityResult roleResult;
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            //Here we create a Admin super user who will maintain the website
+            var filepath = "/images/profiles/user-av.jpg";
+            var poweruser = new ApplicationUser
+            {
+                UserName = Configuration["AppSettings:AdminUserName"],
+                Email = Configuration["AppSettings:AdminUserEmail"],
+                FirstName = "Dotnet",
+                LastName = "Admin",
+                JoinDate = DateTime.Now,
+                AvatarPath = filepath.ToString(),
+                LastLoginDate = DateTime.Now,
+            };
+            string userPWD = Configuration["AppSettings:AdminUserPassword"];
+            // var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
+
+            // if (createPowerUser.Succeeded)
+            // {
+            //     await UserManager.AddToRoleAsync(poweruser, "Admin");
+
+            // }
+
+           var _user = await UserManager.FindByEmailAsync("Temilaj@gmail.com");
+           if(_user == null)
+           {
+                var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
+                if (createPowerUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(poweruser, "Admin");
+
+                }
+           }
+        //    else if(!_user.Roles.Contains("Admin"))
+        //    {
+        //        await UserManager.AddToRoleAsync(_user, "Admin");
+        //    }
         }
     }
 }

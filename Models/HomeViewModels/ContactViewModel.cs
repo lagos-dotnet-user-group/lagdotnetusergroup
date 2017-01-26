@@ -10,7 +10,7 @@ namespace WebApplication.Models.HomeViewModels
         [StringLength(200, MinimumLength = 3)]
         public string Name { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
 
         [Required]
         [EmailAddress]
