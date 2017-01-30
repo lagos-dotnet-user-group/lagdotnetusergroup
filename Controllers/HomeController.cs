@@ -36,6 +36,22 @@ namespace WebApplication.Controllers
             return View();
         }
 
+        [Route("events")]
+        public IActionResult Events()
+        {
+            ViewData["Message"] = "Your contact page.";
+
+            return View();
+        }
+
+        [Route("videos")]
+        public IActionResult Videos()
+        {
+            ViewData["Message"] = "Your contact page.";
+
+            return View();
+        }
+
         [Route("contact")]
         public IActionResult Contact()
         {
@@ -43,6 +59,7 @@ namespace WebApplication.Controllers
 
             return View();
         }
+
 
         [HttpPost]
         [Route("contact")]
