@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebApplication.Data;
@@ -23,5 +24,18 @@ namespace WebApplication.Services
             }
             return _subscribers;
         }
+
+        // public IEnumerable<Subscriber> GetSubscriberMetric()
+        // {
+        //     var dt  = DateTime.Now;
+        //     var _subscribers = _db.Subscribers
+        //                     .Where(x => x.SubscribeDate.AddDays(7) > dt)
+        //                     .ToArray();
+        //     if (_subscribers == null)
+        //     {
+        //         return null;
+        //     }
+        //     return _subscribers;
+        // }
     }
 }

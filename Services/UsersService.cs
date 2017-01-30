@@ -7,6 +7,7 @@ using WebApplication.Data;
 using WebApplication.Models;
 using WebApplication.Models.AdminViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApplication.Services
 {
@@ -121,5 +122,34 @@ namespace WebApplication.Services
             return _user;
 
         }
+
+        public IEnumerable<SelectListItem> GetUserRoles(string usrrole)
+        {
+           List<RoleViewModel> _roleList = new List<RoleViewModel>();
+           _roleList.Add(new RoleViewModel() { Role = "Admin", RoleId = "1" });
+           _roleList.Add(new RoleViewModel() { Role = "Manager", RoleId = "2" });
+           _roleList.Add(new RoleViewModel() { Role = "Editor", RoleId = "3" });
+           _roleList.Add(new RoleViewModel() { Role = "Author", RoleId = "4" });
+           _roleList.Add(new RoleViewModel() { Role = "Member", RoleId = "5" });
+           _roleList = _roleList.OrderBy(x => x.RoleId).ToList();
+
+           List<SelectListItem> roleNames = new List<SelectListItem>();
+           foreach (var role in _roleList)
+           {
+               roleNames.Add(new SelectListItem()
+               {
+                   Text = role.Role,
+                   Value = role.Role
+               });
+           }
+           var selectedRoleName = roleNames.FirstOrDefault(d => d.Value == usrrole);
+           if (selectedRoleName != null)
+           {
+               selectedRoleName.Selected = true;
+           }
+           return roleNames;
+        }
+
+
     }
 }
