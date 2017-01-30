@@ -157,16 +157,16 @@ namespace WebApplication
                 LastLoginDate = DateTime.Now,
             };
             string userPWD = Configuration["AppSettings:AdminUserPassword"];
-        //    var _user = await UserManager.FindByEmailAsync(Configuration["AppSettings:AdminUserEmail"]);
-        //    if(_user == null)
-        //    {
-        //         var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
-        //         if (createPowerUser.Succeeded)
-        //         {
-        //             await UserManager.AddToRoleAsync(poweruser, "Admin");
+           var _user = await UserManager.FindByEmailAsync(Configuration["AppSettings:AdminUserEmail"]);
+           if(_user == null)
+           {
+                var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
+                if (createPowerUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(poweruser, "Admin");
 
-        //         }
-        //    }
+                }
+           }
         //    else if(!_user.Roles.Contains("Admin"))
         //    {
         //        await UserManager.AddToRoleAsync(_user, "Admin");
