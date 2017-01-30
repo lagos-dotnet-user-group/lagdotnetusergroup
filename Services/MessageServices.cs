@@ -23,7 +23,7 @@ namespace WebApplication.Services
             body.HtmlBody = message;
             var _message = new MimeMessage();
             _message.To.Add(new MailboxAddress(emailName, email));
-            //TODO: change email
+            //TODO: change email to mail chimp
             _message.From.Add(new MailboxAddress("Lagos dotnet user group", "lagosdotnetusergroup@outlook.com"));
             _message.Subject = subject;
             _message.Body = body.ToMessageBody();

@@ -17,6 +17,12 @@ dotnet ef database update
 dotnet run
 
 ```
+You can also run the app in watch mode, if you wish with the follwing comman
+
+```bash
+dotnet watch run
+
+```
 
 The `dotnet restore` command first restorest the necessary packages required to run the application, 
 the `dotnet restore` command simultaneously re-compiles and runs the `kestrel-server`.
