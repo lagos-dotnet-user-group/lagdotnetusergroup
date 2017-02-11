@@ -12,6 +12,8 @@ this repository contains source code for the [Lagos dotnet user group](http://la
 restore the .NET core packages described in the `package.json`, the update database with the migrations and run the project:
 
 ```bash
+npm install
+bower install
 dotnet restore
 dotnet ef database update
 dotnet run
