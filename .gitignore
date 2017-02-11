@@ -235,3 +235,6 @@ _Pvt_Extensions
 
 # Bower - install directory
 wwwroot/lib/
+
+# Our ignores
+.env
