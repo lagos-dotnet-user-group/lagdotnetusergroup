@@ -238,3 +238,5 @@ wwwroot/lib/
 
 # Our ignores
 .env
+appsettings.Production.json
+appsettings.json
