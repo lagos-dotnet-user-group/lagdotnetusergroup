@@ -92,20 +92,9 @@ namespace WebApplication.Services
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
                 model.UserEmail = user.Email;
+                model.JoinDate = user.JoinDate;
                 model.LastLoginDate = user.LastLoginDate;
-                userList.Add(new AdminUserViewModel()
-                {
-                    UserName = model.UserName,
-                    roleName = model.roleName,
-                    userId = model.userId,
-                    roleRank = model.roleRank,
-                    UserEmail = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    JoinDate = user.JoinDate,
-                    LastLoginDate = user.LastLoginDate,
-                    
-                });
+                userList.Add(model);
                 model.roleName = null;
             }
             return userList;

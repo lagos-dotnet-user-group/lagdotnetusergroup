@@ -5,6 +5,7 @@ namespace WebApplication.Models
 {
     public class Contact
     {
+        [Key]
         public int Id { get; set; }
 
         public DateTime Date { get; set; }

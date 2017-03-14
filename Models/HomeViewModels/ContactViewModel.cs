@@ -7,7 +7,7 @@ namespace WebApplication.Models.HomeViewModels
     {
 
         [Required(ErrorMessage ="Please supply a name")]
-        [StringLength(200, MinimumLength = 3)]
+        [StringLength(100, MinimumLength = 3)]
         public string Name { get; set; }
 
         public DateTime Date { get; set; } = DateTime.Now;
