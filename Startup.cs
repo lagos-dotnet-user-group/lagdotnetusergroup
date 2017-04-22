@@ -28,7 +28,8 @@ namespace WebApplication
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
                 // .AddDotEnvVariables();
 
             if (env.IsDevelopment())
@@ -65,6 +66,8 @@ namespace WebApplication
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+            // services.Configure<AppValues>(Configuration.GetSection("AppValues"));
+            // services.Configure<GzipCompressionProviderOptions>(options => {options.Level = CompressionLevel.Fastest;});
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
